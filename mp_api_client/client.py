@@ -3,8 +3,14 @@ import json
 from ftplib import FTP
 from dotenv import load_dotenv
 import os
+from datetime import datetime, timedelta
 
-load_dotenv
+load_dotenv()
+
+# datetime
+current_date = datetime.now()
+start_date = current_date.strftime('%m/%d/%Y')
+end_date = (current_date + timedelta(days=7)).strftime('%m/%d/%Y')
 
 url = 'https://standrew.ministryplatform.com/ministryplatformapi/procs/api_church_specific_get_events'
 headers = {
@@ -15,8 +21,8 @@ headers = {
 
 # payload
 payload = {
-    "@StartDate": "1/16/2025",
-    "@EndDate" : "1/23/2025"
+    "@StartDate": start_date,
+    "@EndDate" : end_date
 }
 
 # POST request
@@ -59,8 +65,8 @@ if response.status_code == 200:
     ftp_password = os.getenv("FTP_PASSWORD")
 
 # Upload JSON file
-    upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, '/remote/path/events.json')
-    upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, '/remote/path/events.json')
+    upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, '/SAMC FTP/calender/FS_Cal/events.json')
+    upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, '/SAMC FTP/calender/FS_Cal/events.txt')
 
 else:
     print(f"Failed to fetch data: {response.status_code} - {response.text}")
