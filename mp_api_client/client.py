@@ -65,8 +65,8 @@ if response.status_code == 200:
     ftp_password = os.getenv("FTP_PASSWORD")
 
 # Upload JSON file
-    upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, '/SAMC FTP/calender/FS_Cal/events.json')
-    upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, '/SAMC FTP/calender/FS_Cal/events.txt')
+    upload_to_ftp(ftp_host, ftp_username, ftp_password, 'events.json', '/SAMC FTP/calender/FS_Cal/events.json')
+    upload_to_ftp(ftp_host, ftp_username, ftp_password, 'events.txt', '/SAMC FTP/calender/FS_Cal/events.txt')
 
 else:
     print(f"Failed to fetch data: {response.status_code} - {response.text}")
