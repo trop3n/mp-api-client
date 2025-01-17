@@ -25,13 +25,15 @@ def fetch_bearer_token():
         )
         response.raise_for_status() # raise an error for bad codes
         token_data = response.json()
-        return token_data["access_token"]
+        return token_data["access_token"], datetime.now() + timedelta(hours=1)
     except Exception as e:
         print(f"Failed to fetch Bearer token: {e}")
-        return None
+        return None, None
 
 def get_bearer_token():
-    if not os.getenv("BEARER_TOKEN"):
+    bearer_token = os.getenv("BEARER_TOKEN")
+    token_expiration = os.getenv("TOKEN_EXPIRATION")
+    if not bearer_token or (token_expiration and datetime.now() > datetime.fromisoformat(token_expiration)):
         print("Bearer token not found in .env. Fetching a new one...")
         new_token = fetch_bearer_token()
         if new_token:
@@ -41,7 +43,7 @@ def get_bearer_token():
         else:
             raise Exception("Failed to fetch a new Bearer token.")
         
-    return os.getenv("BEARER_TOKEN")
+    return bearer_token
 
 def upload_to_ftp(host, username, password, file_path, remote_path):
     try:
@@ -104,12 +106,12 @@ def main():
         ftp_password = os.getenv("FTP_PASSWORD")
 
         # Upload JSON
-        upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, "/remote/path/events.json")
+        upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, "/calender/FS_CAL/events.json")
 
         # Upload TXT
-        upload_to_ftp(ftp_host, ftp_username, ftp_password, txt_filename, "remote/path/events.txt")
+        upload_to_ftp(ftp_host, ftp_username, ftp_password, txt_filename, "calender/FS_CAL/events.txt")
     else:
         print(f"Failed to fetch data: {response.status_code} - {response.text}")
     
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
