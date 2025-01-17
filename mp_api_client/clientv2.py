@@ -18,13 +18,14 @@ def fetch_bearer_token():
             data={
                 "grant_type": "client_credentials",
                 "client_id" : CLIENT_ID,
-                "client_secret" : CLIENT_SECRET,
+                "client_secret" : CLIENT_SECRET,                 
                 "scope" : "http://www.thinkministry.com/dataplatform/scopes/all"
             },
             headers={"Content-Type": "application/x-www-form-urlencoded"}
         )
         response.raise_for_status() # raise an error for bad codes
         token_data = response.json()
+        print("Bearer token fetched successfully!")
         return token_data["access_token"], datetime.now() + timedelta(hours=1)
     except Exception as e:
         print(f"Failed to fetch Bearer token: {e}")
@@ -35,14 +36,29 @@ def get_bearer_token():
     token_expiration = os.getenv("TOKEN_EXPIRATION")
     if not bearer_token or (token_expiration and datetime.now() > datetime.fromisoformat(token_expiration)):
         print("Bearer token not found in .env. Fetching a new one...")
-        new_token = fetch_bearer_token()
+        new_token, new_expiration = fetch_bearer_token()
         if new_token:
-            with open(".env", "a") as env_file:
-                env_file.write(f"\nBEARER_TOKEN={new_token}")
+            with open(".env", "r") as env_file:
+                lines = env_file.readlines()
+            
+            # update constants in .env
+            updated_lines = []
+            for line in lines:
+                if line.startswith("BEARER_TOKEN="):
+                    updated_lines.append(f"BEARER_TOKEN={new_token}\n")
+                elif line.startswith("TOKEN_EXPIRATION="):
+                    updated_lines.append(f"TOKEN_EXPIRATION={new_expiration.isoformat()}\n")
+                else:
+                    updated_lines.append(line)  
+            
+            with open(".env", "w") as env_file:
+                env_file.writelines(updated_lines)
+            print("New Bearer token saved to .env!")
             return new_token
         else:
             raise Exception("Failed to fetch a new Bearer token.")
         
+    print("Using existing Bearer token.")   
     return bearer_token
 
 def upload_to_ftp(host, username, password, file_path, remote_path):
