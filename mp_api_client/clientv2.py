@@ -1,9 +1,10 @@
 import requests
 import json
-from ftplib import FTP_TLS
+from ftplib import FTP
 from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
+from dateutil.parser import parse
 
 load_dotenv()
 
@@ -32,11 +33,17 @@ def fetch_bearer_token():
         return None, None
 
 def get_bearer_token():
-    bearer_token = os.getenv("BEARER_TOKEN")
-    token_expiration = os.getenv("TOKEN_EXPIRATION")
-    if not bearer_token or (token_expiration and datetime.now() > datetime.fromisoformat(token_expiration)):
-        print("Bearer token not found in .env. Fetching a new one...")
+    # bearer_token = os.getenv("BEARER_TOKEN")
+    # token_expiration = os.getenv("TOKEN_EXPIRATION")
+
+    # print(f"Existing bearer_token: {bearer_token}")
+    # print(f"Token expiration: {token_expiration}")
+    # print(f"Current time: {datetime.now()}")
+
+    # if not bearer_token or not token_expiration or datetime.now() > parse(token_expiration):
+        print("Fetching a new Bearer token...")
         new_token, new_expiration = fetch_bearer_token()
+    # Indent next lines accordingly if you want to change back to previous token updating mechanism
         if new_token:
             with open(".env", "r") as env_file:
                 lines = env_file.readlines()
@@ -50,6 +57,10 @@ def get_bearer_token():
                     updated_lines.append(f"TOKEN_EXPIRATION={new_expiration.isoformat()}\n")
                 else:
                     updated_lines.append(line)  
+                
+            # missing token check
+            if not any(line.startswith("TOKEN_EXPIRATION=") for line in updated_lines):
+                updated_lines.append(f"TOKEN_EXPIRATION={new_expiration.isoformat()}\n")
             
             with open(".env", "w") as env_file:
                 env_file.writelines(updated_lines)
@@ -58,22 +69,27 @@ def get_bearer_token():
         else:
             raise Exception("Failed to fetch a new Bearer token.")
         
-    print("Using existing Bearer token.")   
-    return bearer_token
+    # print("Using existing Bearer token.")   
+    # return bearer_token
 
 def upload_to_ftp(host, username, password, file_path, remote_path):
     try:
-        ftp = FTP_TLS()
+        print(f"Connecting to FTP server: {host}...")
+        ftp = FTP(host)
+        print("FTP connection established.")
+        print(f"Logging in as {username}...")
         ftp.login(username, password)
-        ftp.prot_p()
-        print(f"Connected to FTPS server: {host}")
+        print("Login successful.")
+        print(f"Uploading {file_path} to {remote_path}...")
         with open(file_path, "rb") as file:
             ftp.storbinary(f"STOR {remote_path}", file)
         print(f"Uploaded {file_path} to {remote_path}")
+
         # close connection
         ftp.quit()
+        print("FTP connection closed.")
     except Exception as e:
-        print(f'FTPS upload failed: {e}')
+        print(f'FTP upload failed: {e}')
 
 # Main
 def main():
@@ -122,10 +138,10 @@ def main():
         ftp_password = os.getenv("FTP_PASSWORD")
 
         # Upload JSON
-        upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, "/calender/FS_CAL/events.json")
+        upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, "/calendar/FS_Cal/events.json")
 
         # Upload TXT
-        upload_to_ftp(ftp_host, ftp_username, ftp_password, txt_filename, "calender/FS_CAL/events.txt")
+        upload_to_ftp(ftp_host, ftp_username, ftp_password, txt_filename, "/calendar/FS_Cal/events.txt")
     else:
         print(f"Failed to fetch data: {response.status_code} - {response.text}")
     
