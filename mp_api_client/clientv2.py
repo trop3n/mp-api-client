@@ -138,10 +138,10 @@ def main():
         ftp_password = os.getenv("FTP_PASSWORD")
 
         # Upload JSON
-        upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, "/calendar/FS_Cal/events.json")
+        upload_to_ftp(ftp_host, ftp_username, ftp_password, json_filename, "/calendar/events.json")
 
         # Upload TXT
-        upload_to_ftp(ftp_host, ftp_username, ftp_password, txt_filename, "/calendar/FS_Cal/events.txt")
+        upload_to_ftp(ftp_host, ftp_username, ftp_password, txt_filename, "/calendar/events.txt")
     else:
         print(f"Failed to fetch data: {response.status_code} - {response.text}")
     
