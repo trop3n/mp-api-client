@@ -5,6 +5,10 @@ from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
 from dateutil.parser import parse
+import pyfiglet
+
+banner = pyfiglet.figlet_format("MP-TOOL", font = "alligator"  )
+print(banner)
 
 load_dotenv()
 
