@@ -9,6 +9,8 @@ import pyfiglet
 
 banner = pyfiglet.figlet_format("MP-TOOL", font = "alligator"  )
 print(banner)
+print("Created by Jason Kimm")
+print("St. Andrew Methodist Church 2025")
 
 load_dotenv()
 
