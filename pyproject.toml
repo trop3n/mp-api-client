@@ -6,11 +6,12 @@ authors = ["trop3n <jasondkimm@proton.me>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 requests = "^2.32.3"
 python-dotenv = "^1.0.1"
 python-dateutil = "^2.9.0.post0"
 pyfiglet = "^1.0.2"
+poetry-plugin-shell = "^1.0.1"
 
 
 [build-system]
