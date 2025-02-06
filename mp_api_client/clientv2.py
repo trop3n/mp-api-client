@@ -5,12 +5,12 @@ from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
 from dateutil.parser import parse
-import pyfiglet
+# import pyfiglet
 
-banner = pyfiglet.figlet_format("MP-TOOL", font = "alligator"  )
-print(banner)
-print("Created by Jason Kimm")
-print("St. Andrew Methodist Church 2025")
+# banner = pyfiglet.figlet_format("MP-TOOL", font = "alligator"  )
+# print(banner)
+# print("Created by Jason Kimm")
+# print("St. Andrew Methodist Church 2025")
 
 load_dotenv()
 
@@ -114,7 +114,7 @@ def main():
     current_date = datetime.now()
     payload = {
         "@StartDate": current_date.strftime("%m/%d/%Y"),
-        "@EndDate": (current_date + timedelta(days=7)).strftime("%m/%d/%Y")
+        "@EndDate": (current_date + timedelta(days=21)).strftime("%m/%d/%Y")
     }
     response = requests.post(url, headers=headers, json=payload)
 
