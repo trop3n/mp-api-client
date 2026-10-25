@@ -1,3 +1,5 @@
 # .gitignore
 .env
 /build
+events.json
+events.txt
