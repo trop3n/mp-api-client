@@ -96,6 +96,7 @@ def upload_to_ftp(host, username, password, file_path, remote_path):
         print("FTP connection closed.")
     except Exception as e:
         print(f'FTP upload failed: {e}')
+        raise
 
 # Main
 def main():
@@ -150,6 +151,7 @@ def main():
         upload_to_ftp(ftp_host, ftp_username, ftp_password, txt_filename, "/calendar/events.txt")
     else:
         print(f"Failed to fetch data: {response.status_code} - {response.text}")
+        raise SystemExit(1)
     
 if __name__ == "__main__":
     main()
